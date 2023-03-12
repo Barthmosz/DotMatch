@@ -141,13 +141,27 @@ public class Board : MonoBehaviour
         GamePiece clickedPiece = this.allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
         GamePiece targetPiece = this.allGamePieces[targetTile.xIndex, targetTile.yIndex];
 
-        clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, this.swapTime);
-        targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, this.swapTime);
+        if (targetPiece != null && clickedTile != null)
+        {
+            clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, this.swapTime);
+            targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, this.swapTime);
 
-        yield return new WaitForSeconds(this.swapTime);
+            yield return new WaitForSeconds(this.swapTime);
 
-        HighlightMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
-        HighlightMatchesAt(targetTile.xIndex, targetTile.yIndex);
+            List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
+            List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.xIndex, targetTile.yIndex);
+
+            if (targetPieceMatches.Count == 0 && clickedPieceMatches.Count == 0)
+            {
+                clickedPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
+                targetPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
+            }
+
+            yield return new WaitForSeconds(this.swapTime);
+
+            HighlightMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
+            HighlightMatchesAt(targetTile.xIndex, targetTile.yIndex);
+        }
     }
 
     private bool IsNextTo(Tile start, Tile end)
