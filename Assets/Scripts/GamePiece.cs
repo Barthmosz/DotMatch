@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
+    private bool isMoving = false;
     public int xIndex, yIndex;
 
     private void Update()
@@ -26,7 +27,10 @@ public class GamePiece : MonoBehaviour
 
     public void Move(int x, int y, float timeToMove)
     {
-        StartCoroutine(MoveRoutine(new Vector3(x, y, 0), timeToMove));
+        if (!this.isMoving)
+        {
+            StartCoroutine(MoveRoutine(new Vector3(x, y, 0), timeToMove));
+        }
     }
 
     IEnumerator MoveRoutine(Vector3 destination, float timeToMove)
@@ -34,6 +38,7 @@ public class GamePiece : MonoBehaviour
         Vector3 startPosition = transform.position;
         bool reachedDestination = false;
         float elapsedTime = 0f;
+        this.isMoving = true;
 
         while (!reachedDestination)
         {
@@ -42,6 +47,7 @@ public class GamePiece : MonoBehaviour
                 reachedDestination = true;
                 transform.position = destination;
                 SetCoordinates((int)destination.x, (int)destination.y);
+                break;
             }
 
             elapsedTime += Time.deltaTime;
@@ -50,5 +56,7 @@ public class GamePiece : MonoBehaviour
 
             yield return null;
         }
+
+        this.isMoving = false;
     }
 }
