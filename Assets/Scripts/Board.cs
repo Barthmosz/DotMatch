@@ -9,9 +9,10 @@ public class Board : MonoBehaviour
     private Tile clickedTile;
     private Tile targetTile;
 
-    public int width, height, borderSize;
-    public GameObject tilePrefab;
     public GameObject[] gamePiecePrefabs;
+    public GameObject tilePrefab;
+    public int width, height, borderSize;
+    public float swapTime = 0.5f;
 
     private void Start()
     {
@@ -59,6 +60,8 @@ public class Board : MonoBehaviour
 
                 if (randomPiece != null)
                 {
+                    randomPiece.GetComponent<GamePiece>().Init(this);
+                    randomPiece.transform.parent = transform;
                     PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), i, j);
                 }
             }
@@ -77,7 +80,7 @@ public class Board : MonoBehaviour
         return this.gamePiecePrefabs[randomIndex];
     }
 
-    private void PlaceGamePiece(GamePiece gamePiece, int x, int y)
+    public void PlaceGamePiece(GamePiece gamePiece, int x, int y)
     {
         if (gamePiece == null)
         {
@@ -87,7 +90,16 @@ public class Board : MonoBehaviour
 
         gamePiece.transform.position = new Vector3(x, y, 0);
         gamePiece.transform.rotation = Quaternion.identity;
+        if (IsWithinBounds(x, y))
+        {
+            this.allGamePieces[x, y] = gamePiece;
+        }
         gamePiece.SetCoordinates(x, y);
+    }
+
+    private bool IsWithinBounds(int x, int y)
+    {
+        return (x >= 0 && x < this.width && y >= 0 && y < this.height);
     }
 
     public void ClickTile(Tile tile)
@@ -113,11 +125,16 @@ public class Board : MonoBehaviour
         {
             SwitchTiles(this.clickedTile, this.targetTile);
         }
+        this.clickedTile = null;
+        this.targetTile = null;
     }
 
     private void SwitchTiles(Tile clickedTile, Tile targetTile)
     {
-        this.clickedTile = null;
-        this.targetTile = null;
+        GamePiece clickedPiece = this.allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
+        GamePiece targetPiece = this.allGamePieces[targetTile.xIndex, targetTile.yIndex];
+
+        clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, this.swapTime);
+        targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, this.swapTime);
     }
 }

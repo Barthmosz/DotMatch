@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
+    private Board board;
     private bool isMoving = false;
   
     public int xIndex, yIndex;
@@ -28,6 +29,11 @@ public class GamePiece : MonoBehaviour
         {
             Move((int)transform.position.x - 1, (int)transform.position.y, 0.5f);
         }
+    }
+
+    public void Init(Board board)
+    {
+        this.board = board;
     }
 
     public void SetCoordinates(int x, int y)
@@ -56,8 +62,12 @@ public class GamePiece : MonoBehaviour
             if (Vector3.Distance(transform.position, destination) < 0.01f)
             {
                 reachedDestination = true;
-                transform.position = destination;
-                SetCoordinates((int)destination.x, (int)destination.y);
+
+                if (board != null)
+                {
+                    this.board.PlaceGamePiece(this, (int)destination.x, (int)destination.y);
+                }
+
                 break;
             }
 
