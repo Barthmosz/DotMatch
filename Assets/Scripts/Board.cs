@@ -155,7 +155,7 @@ public class Board : MonoBehaviour
     private List<GamePiece> FindVerticalMatches(int startX, int startY, int minLength = 3)
     {
         List<GamePiece> upwardMatches = FindMatches(startX, startY, new Vector2(0, 1), 2);
-        List<GamePiece> downwardMatches = FindMatches(startX, startY, new Vector2(0, -11), 2);
+        List<GamePiece> downwardMatches = FindMatches(startX, startY, new Vector2(0, -1), 2);
 
         if (upwardMatches == null)
         {
@@ -167,6 +167,24 @@ public class Board : MonoBehaviour
         }
 
         List<GamePiece> combinedMatches = upwardMatches.Union(downwardMatches).ToList();
+        return (combinedMatches.Count >= minLength) ? combinedMatches : null;
+    }
+
+    private List<GamePiece> FindHorizontalMatches(int startX, int startY, int minLength = 3)
+    {
+        List<GamePiece> rightMatches = FindMatches(startX, startY, new Vector2(1, 0), 2);
+        List<GamePiece> leftMatches = FindMatches(startX, startY, new Vector2(-1, 0), 2);
+
+        if (rightMatches == null)
+        {
+            rightMatches = new();
+        }
+        if (leftMatches == null)
+        {
+            leftMatches = new();
+        }
+
+        List<GamePiece> combinedMatches = rightMatches.Union(leftMatches).ToList();
         return (combinedMatches.Count >= minLength) ? combinedMatches : null;
     }
 
