@@ -23,6 +23,7 @@ public class Board : MonoBehaviour
         SetupTiles();
         SetupCamera();
         FillRandom();
+        HighlightMatches();
     }
 
     private void SetupTiles()
@@ -150,6 +151,41 @@ public class Board : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private void HighlightMatches()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                SpriteRenderer spriteRenderer = this.allTiles[i, j].GetComponent<SpriteRenderer>();
+                spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+
+                List<GamePiece> horizontalMatches = FindHorizontalMatches(i, j, 3);
+                List<GamePiece> verticalMatches = FindVerticalMatches(i, j, 3);
+
+                if (horizontalMatches == null)
+                {
+                    horizontalMatches = new();
+                }
+                if (verticalMatches == null)
+                {
+                    verticalMatches = new();
+                }
+
+                List<GamePiece> combinedMatches = horizontalMatches.Union(verticalMatches).ToList();
+
+                if (combinedMatches.Count > 0)
+                {
+                    foreach (GamePiece piece in combinedMatches)
+                    {
+                        spriteRenderer = this.allTiles[piece.xIndex, piece.yIndex].GetComponent<SpriteRenderer>();
+                        spriteRenderer.color = piece.GetComponent<SpriteRenderer>().color;
+                    }
+                }
+            }
+        }
     }
 
     private List<GamePiece> FindVerticalMatches(int startX, int startY, int minLength = 3)
