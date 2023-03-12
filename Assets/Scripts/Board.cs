@@ -112,7 +112,7 @@ public class Board : MonoBehaviour
 
     public void DragToTile(Tile tile)
     {
-        if (this.clickedTile != null)
+        if (this.clickedTile != null && IsNextTo(tile, this.clickedTile))
         {
             this.targetTile = tile;
             Debug.Log($"Clicked tile: {tile.name}");
@@ -136,5 +136,18 @@ public class Board : MonoBehaviour
 
         clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, this.swapTime);
         targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, this.swapTime);
+    }
+
+    private bool IsNextTo(Tile start, Tile end)
+    {
+        if (Mathf.Abs(start.xIndex - end.xIndex) == 1 && start.yIndex == end.yIndex)
+        {
+            return true;
+        }
+        if (Mathf.Abs(start.yIndex - end.yIndex) == 1 && start.xIndex == end.xIndex)
+        {
+            return true;
+        }
+        return false;
     }
 }
