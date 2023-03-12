@@ -5,9 +5,7 @@ using UnityEngine;
 public class GamePiece : MonoBehaviour
 {
     private bool isMoving = false;
-    private Tile clickedTile;
-    private Tile targetTile;
-
+  
     public int xIndex, yIndex;
 
     public enum InterpolationType
@@ -89,36 +87,5 @@ public class GamePiece : MonoBehaviour
         }
 
         this.isMoving = false;
-    }
-
-    public void ClickTile(Tile tile)
-    {
-        if (this.clickedTile == null)
-        {
-            this.clickedTile = tile;
-        }
-    }
-
-    public void DragToTile(Tile tile)
-    {
-        if (this.clickedTile != null)
-        {
-            this.targetTile = tile;
-            Debug.Log($"Clicked tile: {tile.name}");
-        }
-    }
-
-    public void ReleaseTile()
-    {
-        if (this.clickedTile != null && this.targetTile != null)
-        {
-            SwitchTiles(this.clickedTile, this.targetTile);
-        }
-    }
-
-    private void SwitchTiles(Tile clickedTile, Tile targetTile)
-    {
-        this.clickedTile = null;
-        this.targetTile = null;
     }
 }

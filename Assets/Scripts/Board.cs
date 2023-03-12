@@ -6,6 +6,8 @@ public class Board : MonoBehaviour
 {
     private Tile[,] allTiles;
     private GamePiece[,] allGamePieces;
+    private Tile clickedTile;
+    private Tile targetTile;
 
     public int width, height, borderSize;
     public GameObject tilePrefab;
@@ -86,5 +88,36 @@ public class Board : MonoBehaviour
         gamePiece.transform.position = new Vector3(x, y, 0);
         gamePiece.transform.rotation = Quaternion.identity;
         gamePiece.SetCoordinates(x, y);
+    }
+
+    public void ClickTile(Tile tile)
+    {
+        if (this.clickedTile == null)
+        {
+            this.clickedTile = tile;
+        }
+    }
+
+    public void DragToTile(Tile tile)
+    {
+        if (this.clickedTile != null)
+        {
+            this.targetTile = tile;
+            Debug.Log($"Clicked tile: {tile.name}");
+        }
+    }
+
+    public void ReleaseTile()
+    {
+        if (this.clickedTile != null && this.targetTile != null)
+        {
+            SwitchTiles(this.clickedTile, this.targetTile);
+        }
+    }
+
+    private void SwitchTiles(Tile clickedTile, Tile targetTile)
+    {
+        this.clickedTile = null;
+        this.targetTile = null;
     }
 }
