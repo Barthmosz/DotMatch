@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Board : MonoBehaviour
@@ -41,11 +42,11 @@ public class Board : MonoBehaviour
 
     private void SetupCamera()
     {
-        Camera.main.transform.position = new Vector3((float)(this.width - 1)/2f, (float)(this.height - 1)/ 2f, -10f);
+        Camera.main.transform.position = new Vector3((float)(this.width - 1) / 2f, (float)(this.height - 1) / 2f, -10f);
 
         float aspectRatio = (float)Screen.width / (float)Screen.height;
-        float verticalSize = (float)this.height/2f * (float)this.borderSize;
-        float horizontalSize = ((float)this.width/2f + (float)this.borderSize) / aspectRatio;
+        float verticalSize = (float)this.height / 2f * (float)this.borderSize;
+        float horizontalSize = ((float)this.width / 2f + (float)this.borderSize) / aspectRatio;
 
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
     }
@@ -149,6 +150,24 @@ public class Board : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    private List<GamePiece> FindVerticalMatches(int startX, int startY, int minLength = 3)
+    {
+        List<GamePiece> upwardMatches = FindMatches(startX, startY, new Vector2(0, 1), 2);
+        List<GamePiece> downwardMatches = FindMatches(startX, startY, new Vector2(0, -11), 2);
+
+        if (upwardMatches == null)
+        {
+            upwardMatches = new();
+        }
+        if (downwardMatches == null)
+        {
+            downwardMatches = new();
+        }
+
+        List<GamePiece> combinedMatches = upwardMatches.Union(downwardMatches).ToList();
+        return (combinedMatches.Count >= minLength) ? combinedMatches : null;
     }
 
     private List<GamePiece> FindMatches(int startX, int startY, Vector2 searchDirection, int minLength = 3)
