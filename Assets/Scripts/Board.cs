@@ -23,7 +23,6 @@ public class Board : MonoBehaviour
         SetupTiles();
         SetupCamera();
         FillRandom();
-        //HighlightMatches();
     }
 
     private void SetupTiles()
@@ -156,11 +155,13 @@ public class Board : MonoBehaviour
                 clickedPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
                 targetPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
             }
+            else
+            {
+                yield return new WaitForSeconds(this.swapTime);
 
-            yield return new WaitForSeconds(this.swapTime);
-
-            HighlightMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
-            HighlightMatchesAt(targetTile.xIndex, targetTile.yIndex);
+                ClearPieceAt(clickedPieceMatches);
+                ClearPieceAt(targetPieceMatches);
+            }
         }
     }
 
@@ -304,13 +305,20 @@ public class Board : MonoBehaviour
 
             GamePiece nextPiece = this.allGamePieces[nextX, nextY];
 
-            if (nextPiece.matchValue == startPiece.matchValue && !matches.Contains(nextPiece))
+            if (nextPiece == null)
             {
-                matches.Add(nextPiece);
+                break;
             }
             else
             {
-                break;
+                if (nextPiece.matchValue == startPiece.matchValue && !matches.Contains(nextPiece))
+                {
+                    matches.Add(nextPiece);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -319,5 +327,37 @@ public class Board : MonoBehaviour
             return matches;
         }
         return null;
+    }
+
+    private void ClearBoard()
+    {
+        for (int i = 0; i < this.width; i++)
+        {
+            for (int j = 0; j < this.height; j++)
+            {
+                ClearPieceAt(i, j);
+            }
+        }
+    }
+
+    private void ClearPieceAt(int x, int y)
+    {
+        GamePiece pieceToClear = this.allGamePieces[x, y];
+
+        if (pieceToClear != null)
+        {
+            this.allGamePieces[x, y] = null;
+            Destroy(pieceToClear.gameObject);
+        }
+
+        HighlightTileOff(x, y);
+    }
+
+    private void ClearPieceAt(List<GamePiece> gamePieces)
+    {
+        foreach (GamePiece piece in gamePieces)
+        {
+            ClearPieceAt(piece.xIndex, piece.yIndex);
+        }
     }
 }
