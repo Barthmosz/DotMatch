@@ -57,4 +57,17 @@ public class Board : MonoBehaviour
 
         return this.gamePiecePrefabs[randomIndex];
     }
+
+    private void PlaceGamePiece(GamePiece gamePiece, int x, int y)
+    {
+        if (gamePiece == null)
+        {
+            Debug.LogWarning("BOARD: Invalid GamePiece.");
+            return;
+        }
+
+        gamePiece.transform.position = new Vector3(x, y, 0);
+        gamePiece.transform.rotation = Quaternion.identity;
+        gamePiece.SetCoordinates(x, y);
+    }
 }
