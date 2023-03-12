@@ -24,8 +24,9 @@ public class Board : MonoBehaviour
             {
                 GameObject tile = Instantiate(this.tilePrefab, new Vector3(i, j, 0), Quaternion.identity) as GameObject;
                 tile.name = $"Tile ({i},{j})";
-                this.allTiles[i, j] = tile.GetComponent<Tile>();
                 tile.transform.parent = this.transform;
+                this.allTiles[i, j] = tile.GetComponent<Tile>();
+                this.allTiles[i, j].Init(i, j, this);
             }
         }
     }
