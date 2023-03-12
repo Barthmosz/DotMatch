@@ -18,6 +18,7 @@ public class Board : MonoBehaviour
 
         SetupTiles();
         SetupCamera();
+        FillRandom();
     }
 
     private void SetupTiles()
@@ -44,6 +45,22 @@ public class Board : MonoBehaviour
         float horizontalSize = ((float)this.width/2f + (float)this.borderSize) / aspectRatio;
 
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
+    }
+
+    private void FillRandom()
+    {
+        for (int i = 0; i < this.width; i++)
+        {
+            for (int j = 0; j < this.height; j++)
+            {
+                GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+
+                if (randomPiece != null)
+                {
+                    PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), i, j);
+                }
+            }
+        }
     }
 
     private GameObject GetRandomGamePiece()
