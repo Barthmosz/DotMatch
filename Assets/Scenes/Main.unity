@@ -399,6 +399,12 @@ MonoBehaviour:
   height: 9
   borderSize: 1
   tilePrefab: {fileID: 7481984533071728138, guid: 50ea1b1adc5204341a7dee4756a983d8, type: 3}
+  gamePiecePrefabs:
+  - {fileID: 2812393047770627827, guid: 6df1ef12772d740b492c9f9e95e1fa23, type: 3}
+  - {fileID: 5863615761269718066, guid: f5045c5648e83442a982479672b484fa, type: 3}
+  - {fileID: 8406002001342621835, guid: d7929642a3ad1443cae13b3538ff2ba8, type: 3}
+  - {fileID: 7217011843123329731, guid: 16d4c9c544f66419ba6b22441a0795a2, type: 3}
+  - {fileID: 9001886832959520, guid: 38e144bce64324d65aa15bcf52e5be94, type: 3}
 --- !u!1 &1922299273
 GameObject:
   m_ObjectHideFlags: 0
