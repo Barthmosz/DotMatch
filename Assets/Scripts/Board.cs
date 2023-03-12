@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
         SetupTiles();
         SetupCamera();
         FillRandom();
-        HighlightMatches();
+        //HighlightMatches();
     }
 
     private void SetupTiles()
@@ -159,33 +159,53 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                SpriteRenderer spriteRenderer = this.allTiles[i, j].GetComponent<SpriteRenderer>();
-                spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
-
-                List<GamePiece> horizontalMatches = FindHorizontalMatches(i, j, 3);
-                List<GamePiece> verticalMatches = FindVerticalMatches(i, j, 3);
-
-                if (horizontalMatches == null)
-                {
-                    horizontalMatches = new();
-                }
-                if (verticalMatches == null)
-                {
-                    verticalMatches = new();
-                }
-
-                List<GamePiece> combinedMatches = horizontalMatches.Union(verticalMatches).ToList();
-
-                if (combinedMatches.Count > 0)
-                {
-                    foreach (GamePiece piece in combinedMatches)
-                    {
-                        spriteRenderer = this.allTiles[piece.xIndex, piece.yIndex].GetComponent<SpriteRenderer>();
-                        spriteRenderer.color = piece.GetComponent<SpriteRenderer>().color;
-                    }
-                }
+                HighlightMatchesAt(i, j);
             }
         }
+    }
+
+    private void HighlightMatchesAt(int x, int y)
+    {
+        HighlightTileOff(x, y);
+        List<GamePiece> combinedMatches = FindMatchesAt(x, y);
+
+        if (combinedMatches.Count > 0)
+        {
+            foreach (GamePiece piece in combinedMatches)
+            {
+                HighlightTileOn(piece.xIndex, piece.yIndex, piece.GetComponent<SpriteRenderer>().color);
+            }
+        }
+    }
+
+    private void HighlightTileOff(int x, int y)
+    {
+        SpriteRenderer spriteRenderer = this.allTiles[x, y].GetComponent<SpriteRenderer>();
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0);
+    }
+
+    private void HighlightTileOn(int x, int y, Color color)
+    {
+        SpriteRenderer spriteRenderer = this.allTiles[x, y].GetComponent<SpriteRenderer>();
+        spriteRenderer.color = color;
+    }
+
+    private List<GamePiece> FindMatchesAt(int x, int y, int minLength = 3)
+    {
+        List<GamePiece> horizontalMatches = FindHorizontalMatches(x, y, minLength);
+        List<GamePiece> verticalMatches = FindVerticalMatches(x, y, minLength);
+
+        if (horizontalMatches == null)
+        {
+            horizontalMatches = new();
+        }
+        if (verticalMatches == null)
+        {
+            verticalMatches = new();
+        }
+
+        List<GamePiece> combinedMatches = horizontalMatches.Union(verticalMatches).ToList();
+        return combinedMatches;
     }
 
     private List<GamePiece> FindVerticalMatches(int startX, int startY, int minLength = 3)
