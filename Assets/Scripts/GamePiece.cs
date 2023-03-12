@@ -19,6 +19,20 @@ public class GamePiece : MonoBehaviour
     }
     public InterpolationType interpolation = InterpolationType.SmootherStep;
 
+    public enum MatchValue
+    {
+        Yellow,
+        Blue,
+        Magenta,
+        Indigo,
+        Green,
+        Teal,
+        Red,
+        Cyan,
+        Wild
+    }
+    public MatchValue matchValue;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.RightArrow))
