@@ -5,13 +5,17 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
     private Tile[,] allTiles;
+    private GamePiece[,] allGamePieces;
 
     public int width, height, borderSize;
     public GameObject tilePrefab;
+    public GameObject[] gamePiecePrefabs;
 
     private void Start()
     {
         this.allTiles = new Tile[width, height];
+        this.allGamePieces = new GamePiece[width, height];
+
         SetupTiles();
         SetupCamera();
     }
@@ -40,5 +44,17 @@ public class Board : MonoBehaviour
         float horizontalSize = ((float)this.width/2f + (float)this.borderSize) / aspectRatio;
 
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
+    }
+
+    private GameObject GetRandomGamePiece()
+    {
+        int randomIndex = Random.Range(0, this.gamePiecePrefabs.Length);
+
+        if (this.gamePiecePrefabs[randomIndex] == null)
+        {
+            Debug.LogWarning($"BOARD: {randomIndex} does not contain a valid GamePiece prefab.");
+        }
+
+        return this.gamePiecePrefabs[randomIndex];
     }
 }
