@@ -53,16 +53,26 @@ public class Board : MonoBehaviour
 
     private void FillBoard()
     {
+        int maxIterations = 100;
+        int iterations = 0;
+
         for (int i = 0; i < this.width; i++)
         {
             for (int j = 0; j < this.height; j++)
             {
                 GamePiece piece = FillRandomAt(i, j);
+                iterations = 0;
 
                 while (HasMatchOnFill(i, j))
                 {
                     ClearPieceAt(i, j);
                     piece = FillRandomAt(i, j);
+                    iterations++;
+
+                    if (iterations >= maxIterations)
+                    {
+                        break;
+                    }
                 }
             }
         }
