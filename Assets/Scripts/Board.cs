@@ -22,7 +22,7 @@ public class Board : MonoBehaviour
 
         SetupTiles();
         SetupCamera();
-        FillRandom();
+        FillBoard();
     }
 
     private void SetupTiles()
@@ -51,22 +51,52 @@ public class Board : MonoBehaviour
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
     }
 
-    private void FillRandom()
+    private void FillBoard()
     {
         for (int i = 0; i < this.width; i++)
         {
             for (int j = 0; j < this.height; j++)
             {
-                GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+                GamePiece piece = FillRandomAt(i, j);
 
-                if (randomPiece != null)
+                while (HasMatchOnFill(i, j))
                 {
-                    randomPiece.GetComponent<GamePiece>().Init(this);
-                    randomPiece.transform.parent = transform;
-                    PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), i, j);
+                    ClearPieceAt(i, j);
+                    piece = FillRandomAt(i, j);
                 }
             }
         }
+    }
+
+    private GamePiece FillRandomAt(int x, int y)
+    {
+        GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
+
+        if (randomPiece != null)
+        {
+            randomPiece.GetComponent<GamePiece>().Init(this);
+            randomPiece.transform.parent = transform;
+            PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
+            return randomPiece.GetComponent<GamePiece>();
+        }
+        return null;
+    }
+
+    private bool HasMatchOnFill(int x, int y, int minLength = 3)
+    {
+        List<GamePiece> leftMatches = FindMatches(x, y, new Vector2(-1, 0), minLength);
+        List<GamePiece> downwardMatches = FindMatches(x, y, new Vector2(0, -1), minLength);
+
+        if (leftMatches == null)
+        {
+            leftMatches = new();
+        }
+        if (downwardMatches == null)
+        {
+            downwardMatches = new();
+        }
+
+        return (leftMatches.Count > 0 || downwardMatches.Count > 0);
     }
 
     private GameObject GetRandomGamePiece()
