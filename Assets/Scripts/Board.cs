@@ -400,4 +400,35 @@ public class Board : MonoBehaviour
             ClearPieceAt(piece.xIndex, piece.yIndex);
         }
     }
+
+    private List<GamePiece> CollapseColumn(int column, float collapseTime = 0.1f)
+    {
+        List<GamePiece> movingPieces = new();
+
+        for (int i = 0; i < this.height - 1; i++)
+        {
+            if (this.allGamePieces[column, i] == null)
+            {
+                for (int j = i + 1; j < height; j++)
+                {
+                    if (this.allGamePieces[column, j] != null)
+                    {
+                        this.allGamePieces[column, j].Move(column, i, collapseTime);
+                        this.allGamePieces[column, i] = this.allGamePieces[column, j];
+                        this.allGamePieces[column, i].SetCoordinates(column, i);
+
+                        if (!movingPieces.Contains(this.allGamePieces[column, i]))
+                        {
+                            movingPieces.Add(this.allGamePieces[column, i]);
+                        }
+
+                        this.allGamePieces[column, j] = null;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return movingPieces;
+    }
 }
