@@ -1,12 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GamePiece : MonoBehaviour
 {
     private Board board;
     private bool isMoving = false;
-  
+
     public int xIndex, yIndex;
 
     public enum InterpolationType
