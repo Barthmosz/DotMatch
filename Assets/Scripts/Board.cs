@@ -431,4 +431,19 @@ public class Board : MonoBehaviour
 
         return movingPieces;
     }
+
+    private List<int> GetColumns(List<GamePiece> gamePieces)
+    {
+        List<int> collumns = new();
+
+        foreach (GamePiece piece in gamePieces)
+        {
+            if (!collumns.Contains(piece.xIndex))
+            {
+                collumns.Add(piece.xIndex);
+            }
+        }
+
+        return collumns;
+    }
 }
