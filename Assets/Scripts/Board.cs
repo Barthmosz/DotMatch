@@ -201,6 +201,9 @@ public class Board : MonoBehaviour
 
                 ClearPieceAt(clickedPieceMatches);
                 ClearPieceAt(targetPieceMatches);
+
+                CollapseColumn(clickedPieceMatches);
+                CollapseColumn(targetPieceMatches);
             }
         }
     }
@@ -399,6 +402,19 @@ public class Board : MonoBehaviour
         {
             ClearPieceAt(piece.xIndex, piece.yIndex);
         }
+    }
+
+    private List<GamePiece> CollapseColumn(List<GamePiece> gamePieces)
+    {
+        List<GamePiece> movingPieces = new();
+        List<int> columnsToCollapse = GetColumns(gamePieces);
+
+        foreach (int column in columnsToCollapse)
+        {
+            movingPieces = movingPieces.Union(CollapseColumn(column)).ToList();
+        }
+
+        return movingPieces;
     }
 
     private List<GamePiece> CollapseColumn(int column, float collapseTime = 0.1f)
