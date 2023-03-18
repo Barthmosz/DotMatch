@@ -450,7 +450,7 @@ public class Board : MonoBehaviour
                 {
                     if (this.allGamePieces[column, j] != null)
                     {
-                        this.allGamePieces[column, j].Move(column, i, collapseTime);
+                        this.allGamePieces[column, j].Move(column, i, collapseTime * (j - i));
                         this.allGamePieces[column, i] = this.allGamePieces[column, j];
                         this.allGamePieces[column, i].SetCoordinates(column, i);
 
@@ -501,8 +501,7 @@ public class Board : MonoBehaviour
         List<GamePiece> matches = new();
 
         HighlightPieces(gamePieces);
-
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.5f);
 
         bool isFinished = false;
 
@@ -512,13 +511,18 @@ public class Board : MonoBehaviour
             yield return new WaitForSeconds(0.25f);
 
             movingPieces = CollapseColumn(gamePieces);
-            yield return new WaitForSeconds(0.25f);
+
+            while (!IsCollapsed(movingPieces))
+            {
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(0.5f);
 
             matches = FindMatchesAt(movingPieces);
 
             if (matches.Count == 0)
             {
-                isFinished = true;
                 break;
             }
             else
@@ -527,5 +531,21 @@ public class Board : MonoBehaviour
             }
         }
         yield return null;
+    }
+
+    private bool IsCollapsed(List<GamePiece> gamePieces)
+    {
+        foreach (GamePiece piece in gamePieces)
+        {
+            if (piece != null)
+            {
+                if (piece.transform.position.y - (float)piece.yIndex > 0.001f)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
