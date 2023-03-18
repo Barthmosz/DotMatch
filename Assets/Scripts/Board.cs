@@ -9,6 +9,7 @@ public class Board : MonoBehaviour
     private GamePiece[,] allGamePieces;
     private Tile clickedTile;
     private Tile targetTile;
+    private bool playerInputEnabled = true;
 
     public GameObject[] gamePiecePrefabs;
     public GameObject tilePrefab;
@@ -177,28 +178,31 @@ public class Board : MonoBehaviour
 
     private IEnumerator SwitchTilesRoutine(Tile clickedTile, Tile targetTile)
     {
-        GamePiece clickedPiece = this.allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
-        GamePiece targetPiece = this.allGamePieces[targetTile.xIndex, targetTile.yIndex];
-
-        if (targetPiece != null && clickedTile != null)
+        if (this.playerInputEnabled)
         {
-            clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, this.swapTime);
-            targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, this.swapTime);
+            GamePiece clickedPiece = this.allGamePieces[clickedTile.xIndex, clickedTile.yIndex];
+            GamePiece targetPiece = this.allGamePieces[targetTile.xIndex, targetTile.yIndex];
 
-            yield return new WaitForSeconds(this.swapTime);
-
-            List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
-            List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.xIndex, targetTile.yIndex);
-
-            if (targetPieceMatches.Count == 0 && clickedPieceMatches.Count == 0)
+            if (targetPiece != null && clickedTile != null)
             {
-                clickedPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
-                targetPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
-            }
-            else
-            {
+                clickedPiece.Move(targetTile.xIndex, targetTile.yIndex, this.swapTime);
+                targetPiece.Move(clickedTile.xIndex, clickedTile.yIndex, this.swapTime);
+
                 yield return new WaitForSeconds(this.swapTime);
-                ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList());
+
+                List<GamePiece> clickedPieceMatches = FindMatchesAt(clickedTile.xIndex, clickedTile.yIndex);
+                List<GamePiece> targetPieceMatches = FindMatchesAt(targetTile.xIndex, targetTile.yIndex);
+
+                if (targetPieceMatches.Count == 0 && clickedPieceMatches.Count == 0)
+                {
+                    clickedPiece.Move(clickedTile.xIndex, clickedTile.yIndex, swapTime);
+                    targetPiece.Move(targetTile.xIndex, targetTile.yIndex, swapTime);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(this.swapTime);
+                    ClearAndRefillBoard(clickedPieceMatches.Union(targetPieceMatches).ToList());
+                }
             }
         }
     }
@@ -486,13 +490,17 @@ public class Board : MonoBehaviour
 
     private void ClearAndRefillBoard(List<GamePiece> gamePieces)
     {
-        StartCoroutine(ClearAndFillBoardRoutine(gamePieces));
+        StartCoroutine(ClearAndRefillBoardRoutine(gamePieces));
     }
 
-    private IEnumerator ClearAndFillBoardRoutine(List<GamePiece> gamePieces)
+    private IEnumerator ClearAndRefillBoardRoutine(List<GamePiece> gamePieces)
     {
-        StartCoroutine(ClearAndCollapseRoutine(gamePieces));
+        this.playerInputEnabled = false;
+
+        yield return StartCoroutine(ClearAndCollapseRoutine(gamePieces));
         yield return null;
+
+        this.playerInputEnabled = true;
     }
 
     private IEnumerator ClearAndCollapseRoutine(List<GamePiece> gamePieces)
