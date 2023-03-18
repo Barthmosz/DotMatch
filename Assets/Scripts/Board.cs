@@ -227,6 +227,17 @@ public class Board : MonoBehaviour
         }
     }
 
+    private void HighlightPieces(List<GamePiece> gamePieces)
+    {
+        foreach (GamePiece piece in gamePieces)
+        {
+            if (piece != null)
+            {
+                HighlightTileOn(piece.xIndex, piece.yIndex, piece.GetComponent<SpriteRenderer>().color);
+            }
+        }
+    }
+
     private void HighlightMatchesAt(int x, int y)
     {
         HighlightTileOff(x, y);
@@ -488,6 +499,8 @@ public class Board : MonoBehaviour
     {
         List<GamePiece> movingPieces = new();
         List<GamePiece> matches = new();
+
+        HighlightPieces(gamePieces);
 
         yield return new WaitForSeconds(0.25f);
 
