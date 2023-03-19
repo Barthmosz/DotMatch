@@ -55,24 +55,26 @@ public class Board : MonoBehaviour
     private void FillBoard()
     {
         int maxIterations = 100;
-        int iterations = 0;
 
         for (int i = 0; i < this.width; i++)
         {
             for (int j = 0; j < this.height; j++)
             {
-                GamePiece piece = FillRandomAt(i, j);
-                iterations = 0;
-
-                while (HasMatchOnFill(i, j))
+                if (this.allGamePieces[i, j] == null)
                 {
-                    ClearPieceAt(i, j);
-                    piece = FillRandomAt(i, j);
-                    iterations++;
+                    GamePiece piece = FillRandomAt(i, j);
+                    int iterations = 0;
 
-                    if (iterations >= maxIterations)
+                    while (HasMatchOnFill(i, j))
                     {
-                        break;
+                        ClearPieceAt(i, j);
+                        piece = FillRandomAt(i, j);
+                        iterations++;
+
+                        if (iterations >= maxIterations)
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -500,7 +502,14 @@ public class Board : MonoBehaviour
         yield return StartCoroutine(ClearAndCollapseRoutine(gamePieces));
         yield return null;
 
+        yield return StartCoroutine(RefillRoutine());
         this.playerInputEnabled = true;
+    }
+
+    private IEnumerator RefillRoutine()
+    {
+        FillBoard();
+        yield return null;
     }
 
     private IEnumerator ClearAndCollapseRoutine(List<GamePiece> gamePieces)
@@ -525,7 +534,7 @@ public class Board : MonoBehaviour
                 yield return null;
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
 
             matches = FindMatchesAt(movingPieces);
 
