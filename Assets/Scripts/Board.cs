@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
 
         SetupTiles();
         SetupCamera();
-        FillBoard();
+        FillBoard(10, 0.5f);
     }
 
     private void SetupTiles()
@@ -307,6 +307,22 @@ public class Board : MonoBehaviour
         return matches;
     }
 
+    private List<GamePiece> FindAllMatches()
+    {
+        List<GamePiece> combinedMatches = new();
+
+        for (int i = 0; i < this.width; i++)
+        {
+            for (int j = 0; j < this.height; j++)
+            {
+                List<GamePiece> matches = FindMatchesAt(i, j);
+                combinedMatches = combinedMatches.Union(matches).ToList();
+            }
+        }
+
+        return combinedMatches;
+    }
+
     private List<GamePiece> FindVerticalMatches(int startX, int startY, int minLength = 3)
     {
         List<GamePiece> upwardMatches = FindMatches(startX, startY, new Vector2(0, 1), 2);
@@ -506,10 +522,19 @@ public class Board : MonoBehaviour
     {
         this.playerInputEnabled = false;
 
-        yield return StartCoroutine(ClearAndCollapseRoutine(gamePieces));
-        yield return null;
+        List<GamePiece> matches = gamePieces;
 
-        yield return StartCoroutine(RefillRoutine());
+        do
+        {
+            yield return StartCoroutine(ClearAndCollapseRoutine(matches));
+            yield return null;
+
+            yield return StartCoroutine(RefillRoutine());
+            matches = FindAllMatches();
+            yield return new WaitForSeconds(0.5f);
+        }
+        while (matches.Count != 0);
+
         this.playerInputEnabled = true;
     }
 
