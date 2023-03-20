@@ -52,7 +52,7 @@ public class Board : MonoBehaviour
         Camera.main.orthographicSize = (verticalSize > horizontalSize) ? verticalSize : horizontalSize;
     }
 
-    private void FillBoard()
+    private void FillBoard(int falseYOffset = 0, float moveTime = 0.1f)
     {
         int maxIterations = 100;
 
@@ -62,7 +62,7 @@ public class Board : MonoBehaviour
             {
                 if (this.allGamePieces[i, j] == null)
                 {
-                    GamePiece piece = FillRandomAt(i, j);
+                    GamePiece piece = FillRandomAt(i, j, falseYOffset, moveTime);
                     int iterations = 0;
 
                     while (HasMatchOnFill(i, j))
@@ -81,15 +81,22 @@ public class Board : MonoBehaviour
         }
     }
 
-    private GamePiece FillRandomAt(int x, int y)
+    private GamePiece FillRandomAt(int x, int y, int falseYOffset = 0, float moveTime = 0.1f)
     {
         GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 
         if (randomPiece != null)
         {
             randomPiece.GetComponent<GamePiece>().Init(this);
-            randomPiece.transform.parent = transform;
             PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
+
+            if (falseYOffset != 0)
+            {
+                randomPiece.transform.position = new Vector3(x, y + falseYOffset, 0);
+                randomPiece.GetComponent<GamePiece>().Move(x, y, moveTime);
+            }
+
+            randomPiece.transform.parent = transform;
             return randomPiece.GetComponent<GamePiece>();
         }
         return null;
@@ -508,7 +515,7 @@ public class Board : MonoBehaviour
 
     private IEnumerator RefillRoutine()
     {
-        FillBoard();
+        FillBoard(10, 0.5f);
         yield return null;
     }
 
