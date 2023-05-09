@@ -1,10 +1,17 @@
 using UnityEngine;
 
+public enum TileType
+{
+    Normal,
+    Obstacle
+}
+
 public class Tile : MonoBehaviour
 {
     private Board board;
 
     public int xIndex, yIndex;
+    public TileType tileType = TileType.Normal;
 
     public void Init(int x, int y, Board board)
     {
