@@ -11,8 +11,37 @@ public class ParticleManager : MonoBehaviour
         if (clearFXPrefab != null)
         {
             GameObject clearFX = Instantiate(clearFXPrefab, new Vector3(x, y, z), Quaternion.identity);
-            ParticlePlayer particlePlayer = clearFX.GetComponent<ParticlePlayer>();
+            
+            if (clearFX.TryGetComponent<ParticlePlayer>(out var particlePlayer))
+            {
+                particlePlayer.Play();
+            }
+        }
+    }
 
+    public void BreakTileFXAt(int breakableValue, int x, int y, int z = 0)
+    {
+        GameObject breakFX = null;
+        ParticlePlayer particlePlayer = null;
+
+        if (breakableValue > 1)
+        {
+            if (doubleBreakFXPrefab != null)
+            {
+                breakFX = Instantiate(doubleBreakFXPrefab, new Vector3(x, y, z), Quaternion.identity);
+            }
+        }
+        else
+        {
+            if (breakFXPrefab != null)
+            {
+                breakFX = Instantiate(breakFXPrefab, new Vector3(x, y, z), Quaternion.identity);
+            }
+        }
+
+        if (breakFX != null)
+        {
+            particlePlayer = breakFX.GetComponent<ParticlePlayer>();
             if (particlePlayer != null)
             {
                 particlePlayer.Play();

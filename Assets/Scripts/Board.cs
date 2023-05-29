@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     private GamePiece[,] allGamePieces;
     private Tile clickedTile;
     private Tile targetTile;
+    private ParticleManager particleManager;
     private bool playerInputEnabled = true;
 
     public GameObject[] gamePiecePrefabs;
@@ -32,6 +33,7 @@ public class Board : MonoBehaviour
     {
         this.allTiles = new Tile[width, height];
         this.allGamePieces = new GamePiece[width, height];
+        particleManager = GameObject.FindWithTag("ParticleManager").GetComponent<ParticleManager>();
 
         SetupTiles();
         SetupCamera();
@@ -474,7 +476,7 @@ public class Board : MonoBehaviour
             Destroy(pieceToClear.gameObject);
         }
 
-        HighlightTileOff(x, y);
+        //HighlightTileOff(x, y);
     }
 
     private void ClearPieceAt(List<GamePiece> gamePieces)
@@ -484,6 +486,10 @@ public class Board : MonoBehaviour
             if (piece != null)
             {
                 ClearPieceAt(piece.xIndex, piece.yIndex);
+                if (particleManager != null)
+                {
+                    particleManager.ClearPieceFXAt(piece.xIndex, piece.yIndex);
+                }
             }
         }
     }
@@ -492,8 +498,13 @@ public class Board : MonoBehaviour
     {
         Tile tileToBreak = this.allTiles[x, y];
 
-        if (tileToBreak != null)
+        if (tileToBreak != null && tileToBreak.tileType == TileType.Breakable)
         {
+            if (particleManager != null)
+            {
+                particleManager.BreakTileFXAt(tileToBreak.breakableValue, x, y);
+            }
+
             tileToBreak.BreakTile();
         }
     }
@@ -586,7 +597,7 @@ public class Board : MonoBehaviour
 
             yield return StartCoroutine(RefillRoutine());
             matches = FindAllMatches();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
         }
         while (matches.Count != 0);
 
@@ -604,8 +615,8 @@ public class Board : MonoBehaviour
         List<GamePiece> movingPieces = new();
         List<GamePiece> matches = new();
 
-        HighlightPieces(gamePieces);
-        yield return new WaitForSeconds(0.5f);
+        //HighlightPieces(gamePieces);
+        yield return new WaitForSeconds(0.2f);
 
         bool isFinished = false;
 
