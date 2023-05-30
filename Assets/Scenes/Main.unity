@@ -407,6 +407,8 @@ MonoBehaviour:
   height: 9
   borderSize: 2
   swapTime: 0.25
+  fillYOffset: 10
+  fillMoveTime: 0.5
   startingTiles:
   - prefab: {fileID: 4048174124407727054, guid: e60053ef8ad281749ba77f0676430627, type: 3}
     x: 2
@@ -416,7 +418,19 @@ MonoBehaviour:
     x: 2
     y: 3
     z: 0
-  startingGamePieces: []
+  startingGamePieces:
+  - prefab: {fileID: 5863615761269718066, guid: f5045c5648e83442a982479672b484fa, type: 3}
+    x: 0
+    y: 0
+    z: 0
+  - prefab: {fileID: 5863615761269718066, guid: f5045c5648e83442a982479672b484fa, type: 3}
+    x: 0
+    y: 1
+    z: 0
+  - prefab: {fileID: 5863615761269718066, guid: f5045c5648e83442a982479672b484fa, type: 3}
+    x: 1
+    y: 2
+    z: 0
 --- !u!1 &1922299273
 GameObject:
   m_ObjectHideFlags: 0

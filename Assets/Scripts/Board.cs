@@ -19,6 +19,8 @@ public class Board : MonoBehaviour
     public GameObject tileObstaclePrefab;
     public int width, height, borderSize;
     public float swapTime = 0.5f;
+    public int fillYOffset = 10;
+    public float fillMoveTime = 0.5f;
 
     public StartingObject[] startingTiles;
     public StartingObject[] startingGamePieces;
@@ -37,8 +39,10 @@ public class Board : MonoBehaviour
         particleManager = GameObject.FindWithTag("ParticleManager").GetComponent<ParticleManager>();
 
         SetupTiles();
+        SetupGamePieces();
         SetupCamera();
-        FillBoard(10, 0.5f);
+
+        FillBoard(fillYOffset, fillMoveTime);
     }
 
     private void SetupTiles()
@@ -92,6 +96,18 @@ public class Board : MonoBehaviour
         }
     }
 
+    private void SetupGamePieces()
+    {
+        foreach (StartingObject startingObject in startingGamePieces)
+        {
+            if (startingObject != null)
+            {
+                GameObject piece = Instantiate(startingObject.prefab, new Vector3(startingObject.x, startingObject.y), Quaternion.identity);
+                MakeGamePiece(piece, startingObject.x, startingObject.y, fillYOffset, fillMoveTime);
+            }
+        }
+    }
+
     private void SetupCamera()
     {
         Camera.main.transform.position = new Vector3((float)(this.width - 1) / 2f, (float)(this.height - 1) / 2f, -10f);
@@ -131,7 +147,6 @@ public class Board : MonoBehaviour
             }
         }
     }
-
 
     private GamePiece FillRandomAt(int x, int y, int falseYOffset = 0, float moveTime = 0.1f)
     {
@@ -616,7 +631,7 @@ public class Board : MonoBehaviour
 
     private IEnumerator RefillRoutine()
     {
-        FillBoard(10, 0.5f);
+        FillBoard(fillYOffset, fillMoveTime);
         yield return null;
     }
 
