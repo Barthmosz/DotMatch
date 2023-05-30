@@ -408,14 +408,15 @@ MonoBehaviour:
   borderSize: 2
   swapTime: 0.25
   startingTiles:
-  - tilePrefab: {fileID: 3849656224597245905, guid: fa41dbb47041062499af4d0a55316250, type: 3}
+  - prefab: {fileID: 4048174124407727054, guid: e60053ef8ad281749ba77f0676430627, type: 3}
     x: 2
     y: 2
     z: 0
-  - tilePrefab: {fileID: 3849656224597245905, guid: fa41dbb47041062499af4d0a55316250, type: 3}
+  - prefab: {fileID: 3849656224597245905, guid: fa41dbb47041062499af4d0a55316250, type: 3}
     x: 2
     y: 3
     z: 0
+  startingGamePieces: []
 --- !u!1 &1922299273
 GameObject:
   m_ObjectHideFlags: 0

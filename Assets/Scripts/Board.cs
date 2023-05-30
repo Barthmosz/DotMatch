@@ -20,12 +20,13 @@ public class Board : MonoBehaviour
     public int width, height, borderSize;
     public float swapTime = 0.5f;
 
-    public StartingTile[] startingTiles;
+    public StartingObject[] startingTiles;
+    public StartingObject[] startingGamePieces;
 
     [Serializable]
-    public class StartingTile
+    public class StartingObject
     {
-        public GameObject tilePrefab;
+        public GameObject prefab;
         public int x, y, z;
     }
 
@@ -42,11 +43,11 @@ public class Board : MonoBehaviour
 
     private void SetupTiles()
     {
-        foreach (StartingTile tile in startingTiles)
+        foreach (StartingObject tile in startingTiles)
         {
             if (tile != null)
             {
-                MakeTile(tile.tilePrefab, tile.x, tile.y, tile.z);
+                MakeTile(tile.prefab, tile.x, tile.y, tile.z);
             }
         }
 
@@ -64,13 +65,30 @@ public class Board : MonoBehaviour
 
     private void MakeTile(GameObject prefab, int x, int y, int z = 0)
     {
-        if (prefab != null)
+        if (prefab != null && IsWithinBounds(x, y))
         {
             GameObject tile = Instantiate(prefab, new Vector3(x, y, z), Quaternion.identity) as GameObject;
             tile.name = $"Tile ({x},{y})";
             tile.transform.parent = this.transform;
             this.allTiles[x, y] = tile.GetComponent<Tile>();
             this.allTiles[x, y].Init(x, y, this);
+        }
+    }
+
+    private void MakeGamePiece(GameObject prefab, int x, int y, int falseYOffset = 0, float moveTime = 0.1f)
+    {
+        if (prefab != null && IsWithinBounds(x, y))
+        {
+            prefab.GetComponent<GamePiece>().Init(this);
+            PlaceGamePiece(prefab.GetComponent<GamePiece>(), x, y);
+
+            if (falseYOffset != 0)
+            {
+                prefab.transform.position = new Vector3(x, y + falseYOffset, 0);
+                prefab.GetComponent<GamePiece>().Move(x, y, moveTime);
+            }
+
+            prefab.transform.parent = transform;
         }
     }
 
@@ -114,22 +132,14 @@ public class Board : MonoBehaviour
         }
     }
 
+
     private GamePiece FillRandomAt(int x, int y, int falseYOffset = 0, float moveTime = 0.1f)
     {
-        GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
-
-        if (randomPiece != null)
+        if (IsWithinBounds(x, y))
         {
-            randomPiece.GetComponent<GamePiece>().Init(this);
-            PlaceGamePiece(randomPiece.GetComponent<GamePiece>(), x, y);
+            GameObject randomPiece = Instantiate(GetRandomGamePiece(), Vector3.zero, Quaternion.identity) as GameObject;
 
-            if (falseYOffset != 0)
-            {
-                randomPiece.transform.position = new Vector3(x, y + falseYOffset, 0);
-                randomPiece.GetComponent<GamePiece>().Move(x, y, moveTime);
-            }
-
-            randomPiece.transform.parent = transform;
+            MakeGamePiece(randomPiece, x, y, falseYOffset, moveTime);
             return randomPiece.GetComponent<GamePiece>();
         }
         return null;
