@@ -705,4 +705,19 @@ public class Board : MonoBehaviour
 
         return gamePieces;
     }
+
+    private List<GamePiece> GetColumnPieces(int column)
+    {
+        List<GamePiece> gamePieces = new();
+
+        for (int i = 0; i < height; i++)
+        {
+            if (allGamePieces[column, i] != null)
+            {
+                gamePieces.Add(allGamePieces[column, i]);
+            }
+        }
+
+        return gamePieces;
+    }
 }
