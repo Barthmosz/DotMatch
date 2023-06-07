@@ -720,4 +720,22 @@ public class Board : MonoBehaviour
 
         return gamePieces;
     }
+
+    private List<GamePiece> GetAdjacentPieces(int x, int y, int offset = 1)
+    {
+        List<GamePiece> gamePieces = new();
+
+        for (int i = x - offset; i <= x + offset; i++)
+        {
+            for (int j = y - offset; j <= y + offset; j++)
+            {
+                if (IsWithinBounds(i, j))
+                {
+                    gamePieces.Add(allGamePieces[i, j]);
+                }
+            }
+        }
+
+        return gamePieces;
+    }
 }
